@@ -11,15 +11,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.spring.jwt.entity.ChuyenBay;
-
+import com.spring.jwt.jms.JmsProducer;
 import com.spring.jwt.repository.ChuyenBayRepository;
 
 @RestController
 @RequestMapping("/api")
 public class ChuyenBayController {
 	
-//	@Autowired
-//	JmsProducer jmsProducer;
+	@Autowired
+	JmsProducer jmsProducer;
 	
 	@Autowired
 	ChuyenBayRepository chuyenBayRepository;
@@ -28,13 +28,14 @@ public class ChuyenBayController {
 	@PreAuthorize("hasAnyAuthority('USER_READ')")
 	public ResponseEntity<List<ChuyenBay>> findAllByGaDen(@PathVariable String gaDen){
 		List<ChuyenBay> list = chuyenBayRepository.findAllByGaDen(gaDen);
-		
+		jmsProducer.sendMessage(list);
 		return ResponseEntity.ok(list);
 	}
 	
 	@GetMapping("/findByCondition")
 	public ResponseEntity<List<ChuyenBay>> findByCondition(){
 		List<ChuyenBay> list = chuyenBayRepository.findByCondition(10000, 8000);
+		jmsProducer.sendMessage(list);
 		return ResponseEntity.ok(list);
 	}
 	
