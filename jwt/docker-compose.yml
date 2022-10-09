@@ -1,0 +1,24 @@
+version: '3.9'
+services:
+    mysql:
+        image: mysql
+        ports:
+            - 3306:3306
+        volumes:
+            - dbdata:/var/lib/mysql
+        environment:
+            - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+            - MYSQL_DATABASE=spring-jwt-api
+    spring-jwt-api:
+        build: .
+        volumes:
+            - spring-jwt-api:/usr/src/myapp
+        ports:
+            - 8080:8080
+        depends_on:
+            - mysql
+        environment:
+            - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/spring-jwt-api?createDatabaseIfNotExist=true&autoReconnect=true&useSSL=false
+volumes:
+    dbdata:
+    spring-jwt-api:
